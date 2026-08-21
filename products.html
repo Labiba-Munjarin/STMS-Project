@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>পণ্যসমূহ | STMS</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #f1f8ef, #f8fbf7);
+            color: #26352a;
+        }
+
+        .products-page {
+            max-width: 1200px;
+            margin: auto;
+            padding: 35px 20px 70px;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0 0 8px;
+            color: #174d2a;
+            font-size: 32px;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #68756b;
+        }
+
+        .message-box {
+            background: white;
+            border: 1px solid #e1eadf;
+            border-radius: 18px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(25, 70, 35, 0.06);
+        }
+
+        .error-box {
+            background: #fff0f0;
+            color: #a52a2a;
+            border: 1px solid #f0cccc;
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid #e1eadf;
+            border-radius: 22px;
+            padding: 22px;
+            box-shadow: 0 10px 30px rgba(25, 70, 35, 0.07);
+            transition: 0.2s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(25, 70, 35, 0.11);
+        }
+
+        .product-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            background: #eaf5e7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        .product-card h2 {
+            color: #174d2a;
+            margin: 0 0 8px;
+            font-size: 22px;
+        }
+
+        .seller {
+            color: #68756b;
+            margin-bottom: 15px;
+        }
+
+        .details {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .detail {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #edf2eb;
+        }
+
+        .detail:last-child {
+            border-bottom: none;
+        }
+
+        .detail span:first-child {
+            color: #68756b;
+        }
+
+        .detail span:last-child {
+            color: #244b2c;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .description {
+            color: #68756b;
+            line-height: 1.6;
+            margin: 12px 0 18px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .available {
+            background: #e8f6e8;
+            color: #28733a;
+        }
+
+        .sold-out {
+            background: #ffeaea;
+            color: #a52a2a;
+        }
+
+        .order-btn {
+            width: 100%;
+            border: none;
+            border-radius: 13px;
+            padding: 13px;
+            background: #246b38;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .order-btn:hover {
+            background: #174d2a;
+        }
+
+        .order-btn:disabled {
+            background: #9eaaa0;
+            cursor: not-allowed;
+        }
+
+        .empty-box {
+            background: white;
+            border-radius: 18px;
+            padding: 40px 20px;
+            text-align: center;
+            color: #68756b;
+            border: 1px solid #e1eadf;
+        }
+
+        @media (max-width: 950px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .products-page {
+                padding: 25px 15px 50px;
+            }
+
+            .page-header h1 {
+                font-size: 27px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        STMS
+    </div>
+
+    <div class="nav-links">
+
+        <a href="index.html">হোম</a>
+
+        <a href="dashboard.html">ড্যাশবোর্ড</a>
+
+        <a href="products.html">পণ্যসমূহ</a>
+
+        <a href="orders.html">আমার অর্ডার</a>
+
+        <a href="#" onclick="logout(); return false;">
+            লগআউট
+        </a>
+
+    </div>
+
+</nav>
+
+
+<main class="products-page">
+
+    <div class="page-header">
+
+        <h1>🌰 সুপারির পণ্যসমূহ</h1>
+
+        <p>
+            আপনার প্রয়োজনীয় পণ্য নির্বাচন করে অর্ডার করুন।
+        </p>
+
+    </div>
+
+
+    <div id="loadingBox" class="message-box">
+        ⏳ পণ্য লোড হচ্ছে...
+    </div>
+
+
+    <div id="errorBox" class="error-box hidden"></div>
+
+
+    <div
+        id="productsGrid"
+        class="products-grid hidden">
+    </div>
+
+
+    <div
+        id="emptyBox"
+        class="empty-box hidden">
+
+        <h2>🌰 কোনো পণ্য পাওয়া যায়নি</h2>
+
+        <p>
+            বর্তমানে কোনো পণ্য অর্ডারের জন্য উপলব্ধ নেই।
+        </p>
+
+    </div>
+
+</main>
+
+
+<script>
+
+    // ==========================================
+    // USER
+    // ==========================================
+
+    const user = JSON.parse(
+        localStorage.getItem("stmsUser")
+    );
+
+    if (!user) {
+        window.location.href = "login.html";
+    }
+
+
+    // ==========================================
+    // ELEMENTS
+    // ==========================================
+
+    const loadingBox =
+        document.getElementById("loadingBox");
+
+    const errorBox =
+        document.getElementById("errorBox");
+
+    const productsGrid =
+        document.getElementById("productsGrid");
+
+    const emptyBox =
+        document.getElementById("emptyBox");
+
+
+    // ==========================================
+    // ESCAPE HTML
+    // ==========================================
+
+    function escapeHtml(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    // ==========================================
+    // NUMBER FORMAT
+    // ==========================================
+
+    function formatNumber(value) {
+
+        return Number(value || 0)
+            .toLocaleString("bn-BD");
+
+    }
+
+
+    // ==========================================
+    // BANGLA PRODUCT TYPE
+    // ==========================================
+
+    function getBanglaType(type) {
+
+        if (type === "Fresh Supari") {
+            return "কাঁচা সুপারি";
+        }
+
+        if (type === "Dried Supari") {
+            return "শুকনা সুপারি";
+        }
+
+        if (type === "Processed Supari") {
+            return "প্রক্রিয়াজাত সুপারি";
+        }
+
+        return type || "সুপারি";
+
+    }
+
+
+    // ==========================================
+    // SHOW ERROR
+    // ==========================================
+
+    function showError(message) {
+
+        loadingBox.classList.add("hidden");
+
+        productsGrid.classList.add("hidden");
+
+        emptyBox.classList.add("hidden");
+
+        errorBox.innerHTML =
+            "❌ " + escapeHtml(message);
+
+        errorBox.classList.remove("hidden");
+
+    }
+
+
+    // ==========================================
+    // ORDER PRODUCT
+    // ==========================================
+
+    function orderProduct(productId) {
+
+        if (!productId) {
+
+            alert(
+                "পণ্যের ID পাওয়া যায়নি।"
+            );
+
+            return;
+        }
+
+        /*
+         * IMPORTANT
+         *
+         * Product ID URL-এর সাথে পাঠানো হচ্ছে।
+         *
+         * Example:
+         * order.html?productId=6a880540fe8e26aef6bb695a
+         */
+
+        window.location.href =
+            "order.html?productId=" +
+            encodeURIComponent(productId);
+
+    }
+
+
+    // ==========================================
+    // LOAD PRODUCTS
+    // ==========================================
+
+    async function loadProducts() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "http://localhost:5000/api/products"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "পণ্য লোড করা যায়নি।"
+                );
+
+            }
+
+
+            const products =
+                await response.json();
+
+
+            if (!Array.isArray(products)) {
+
+                throw new Error(
+                    "সঠিক product data পাওয়া যায়নি।"
+                );
+
+            }
+
+
+            loadingBox.classList.add("hidden");
+
+
+            // ======================================
+            // ONLY AVAILABLE PRODUCTS
+            // ======================================
+
+            const availableProducts =
+                products.filter(product => {
+
+                    const quantity =
+                        Number(
+                            product.quantity || 0
+                        );
+
+                    const status =
+                        String(
+                            product.status || ""
+                        ).toLowerCase();
+
+                    /*
+                     * quantity > 0 হলে available
+                     */
+
+                    return (
+                        quantity > 0 &&
+                        status !== "sold out"
+                    );
+
+                });
+
+
+            // ======================================
+            // EMPTY
+            // ======================================
+
+            if (
+                availableProducts.length === 0
+            ) {
+
+                emptyBox.classList.remove(
+                    "hidden"
+                );
+
+                return;
+
+            }
+
+
+            // ======================================
+            // CREATE PRODUCT CARDS
+            // ======================================
+
+            productsGrid.innerHTML =
+                availableProducts
+                    .map(product => {
+
+                        const stock =
+                            Number(
+                                product.quantity || 0
+                            );
+
+                        const price =
+                            Number(
+                                product.pricePerKg || 0
+                            );
+
+
+                        return `
+
+                            <div class="product-card">
+
+                                <div class="product-icon">
+                                    🌰
+                                </div>
+
+                                <h2>
+                                    ${escapeHtml(
+                                        getBanglaType(
+                                            product.type
+                                        )
+                                    )}
+                                </h2>
+
+
+                                <div class="seller">
+
+                                    👤 বিক্রেতা:
+
+                                    <strong>
+                                        ${escapeHtml(
+                                            product.sellerName ||
+                                            "অজানা"
+                                        )}
+                                    </strong>
+
+                                </div>
+
+
+                                <span class="status available">
+                                    ✓ Available
+                                </span>
+
+
+                                <div class="details">
+
+                                    <div class="detail">
+
+                                        <span>
+                                            📦 মজুদ
+                                        </span>
+
+                                        <span>
+                                            ${formatNumber(stock)} KG
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="detail">
+
+                                        <span>
+                                            💰 প্রতি কেজি
+                                        </span>
+
+                                        <span>
+                                            ৳${formatNumber(price)}
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="detail">
+
+                                        <span>
+                                            📍 স্থান
+                                        </span>
+
+                                        <span>
+                                            ${escapeHtml(
+                                                product.location ||
+                                                "—"
+                                            )}
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="detail">
+
+                                        <span>
+                                            🌰 ধরন
+                                        </span>
+
+                                        <span>
+                                            ${escapeHtml(
+                                                getBanglaType(
+                                                    product.type
+                                                )
+                                            )}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                ${
+                                    product.description
+                                        ? `
+                                            <div class="description">
+                                                ${escapeHtml(
+                                                    product.description
+                                                )}
+                                            </div>
+                                          `
+                                        : ""
+                                }
+
+
+                                <button
+                                    class="order-btn"
+                                    onclick="orderProduct('${product._id}')">
+
+                                    🛒 অর্ডার করুন
+
+                                </button>
+
+                            </div>
+
+                        `;
+
+                    })
+                    .join("");
+
+
+            productsGrid.classList.remove(
+                "hidden"
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Load Products Error:",
+                error
+            );
+
+            showError(
+                "সার্ভারের সাথে সংযোগ করা যাচ্ছে না। Backend চালু আছে কিনা নিশ্চিত করুন।"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // LOGOUT
+    // ==========================================
+
+    function logout() {
+
+        localStorage.removeItem(
+            "stmsUser"
+        );
+
+        localStorage.removeItem(
+            "stmsToken"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+
+    // ==========================================
+    // START
+    // ==========================================
+
+    loadProducts();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,1385 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ড্যাশবোর্ড | STMS</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<!-- ================================
+     NAVIGATION
+================================= -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        STMS
+    </div>
+
+    <div class="nav-links" id="navLinks"></div>
+
+</nav>
+
+
+<!-- ================================
+     DASHBOARD
+================================= -->
+
+<main class="dashboard-page">
+
+    <div class="dashboard-shell">
+
+        <!-- TOP SECTION -->
+
+        <section class="dashboard-top">
+
+            <div>
+
+                <div class="eyebrow">
+                    সুপারি ট্রেডিং ম্যানেজমেন্ট সিস্টেম
+                </div>
+
+                <h1
+                    class="dashboard-title"
+                    id="dashboardTitle">
+                    ড্যাশবোর্ড
+                </h1>
+
+                <p
+                    class="dashboard-subtitle"
+                    id="welcomeMessage">
+                    আপনার ব্যবসার সবকিছু এক জায়গায়।
+                </p>
+
+            </div>
+
+
+            <!-- PROFILE -->
+
+            <div class="profile-chip">
+
+                <div
+                    class="avatar"
+                    id="avatar">
+                    👤
+                </div>
+
+                <div>
+
+                    <strong id="userName">
+                        ব্যবহারকারী
+                    </strong>
+
+                    <small id="userRole">
+                        —
+                    </small>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             LOW STOCK ALERT
+        ================================= -->
+
+        <div
+            id="lowStockAlert"
+            class="alert-strip hidden">
+        </div>
+
+
+        <!-- ================================
+             STATISTICS
+        ================================= -->
+
+        <section
+            class="stats-grid"
+            id="statsGrid">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⏳
+                </div>
+
+                <h2>...</h2>
+
+                <p>
+                    তথ্য লোড হচ্ছে
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⏳
+                </div>
+
+                <h2>...</h2>
+
+                <p>
+                    তথ্য লোড হচ্ছে
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⏳
+                </div>
+
+                <h2>...</h2>
+
+                <p>
+                    তথ্য লোড হচ্ছে
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⏳
+                </div>
+
+                <h2>...</h2>
+
+                <p>
+                    তথ্য লোড হচ্ছে
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             DASHBOARD GRID
+        ================================= -->
+
+        <section class="dashboard-grid">
+
+
+            <!-- QUICK ACTIONS -->
+
+            <div class="panel">
+
+                <h2>
+                    ⚡ দ্রুত কাজ
+                </h2>
+
+                <p class="panel-sub">
+                    আপনার ভূমিকা অনুযায়ী প্রয়োজনীয় কাজগুলো এখানে পাবেন
+                </p>
+
+                <div
+                    class="action-grid"
+                    id="actionGrid">
+                </div>
+
+            </div>
+
+
+            <!-- SYSTEM STATUS -->
+
+            <div class="panel">
+
+                <h2>
+                    🟢 সিস্টেম অবস্থা
+                </h2>
+
+                <p class="panel-sub">
+                    গুরুত্বপূর্ণ সেবাগুলোর অবস্থা
+                </p>
+
+
+                <div class="status-list">
+
+
+                    <div class="system-item">
+
+                        <span>
+                            🔐 লগইন ও নিরাপত্তা
+                        </span>
+
+                        <span class="status-active">
+                            সক্রিয়
+                        </span>
+
+                    </div>
+
+
+                    <div class="system-item">
+
+                        <span>
+                            🌰 পণ্য ব্যবস্থাপনা
+                        </span>
+
+                        <span class="status-active">
+                            সক্রিয়
+                        </span>
+
+                    </div>
+
+
+                    <div class="system-item">
+
+                        <span>
+                            📦 অর্ডার ব্যবস্থাপনা
+                        </span>
+
+                        <span class="status-active">
+                            সক্রিয়
+                        </span>
+
+                    </div>
+
+
+                    <div class="system-item">
+
+                        <span>
+                            🔔 স্টক সতর্কতা
+                        </span>
+
+                        <span class="status-active">
+                            সক্রিয়
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="role-note"
+                    id="roleNote">
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<!-- ================================
+     DASHBOARD JAVASCRIPT
+================================= -->
+
+<script>
+
+"use strict";
+
+
+// ========================================
+// API
+// ========================================
+
+const API = "http://127.0.0.1:5000/api";
+
+
+// ========================================
+// USER CHECK
+// ========================================
+
+let user = null;
+
+try {
+
+    user = JSON.parse(
+        localStorage.getItem("stmsUser")
+    );
+
+} catch (error) {
+
+    console.error(
+        "User data error:",
+        error
+    );
+
+}
+
+
+if (!user) {
+
+    window.location.href = "login.html";
+
+}
+
+
+// ========================================
+// ROLE
+// ========================================
+
+const role =
+    String(
+        user?.role || "consumer"
+    ).toLowerCase();
+
+
+// ========================================
+// ROLE INFORMATION
+// ========================================
+
+const roleInfo = {
+
+    admin: {
+
+        label: "অ্যাডমিন",
+
+        icon: "👑",
+
+        title: "অ্যাডমিন ড্যাশবোর্ড",
+
+        note:
+            "পুরো STMS পরিচালনা করুন—ব্যবহারকারী, পণ্য, অর্ডার ও রিপোর্ট দেখুন।",
+
+        actions: [
+
+            [
+                "👥",
+                "ব্যবহারকারী ব্যবস্থাপনা",
+                "সব ব্যবহারকারীর তথ্য দেখুন",
+                "admin.html"
+            ],
+
+            [
+                "🌰",
+                "পণ্য ব্যবস্থাপনা",
+                "পণ্য ও স্টক দেখুন",
+                "products.html"
+            ],
+
+            [
+                "🛒",
+                "অর্ডার ব্যবস্থাপনা",
+                "সব অর্ডার ও স্ট্যাটাস দেখুন",
+                "orders.html"
+            ],
+
+            [
+                "📊",
+                "রিপোর্ট",
+                "ব্যবসার সারসংক্ষেপ দেখুন",
+                "reports.html"
+            ]
+
+        ]
+
+    },
+
+
+    farmer: {
+
+        label: "কৃষক",
+
+        icon: "🌾",
+
+        title: "কৃষক ড্যাশবোর্ড",
+
+        note:
+            "আপনার সুপারি বাজারে দিন, মজুদ দেখুন এবং ক্রেতার অর্ডারের অবস্থা সহজে বুঝুন।",
+
+        actions: [
+
+            [
+                "➕",
+                "সুপারি যোগ করুন",
+                "নতুন পণ্য বাজারে দিন",
+                "add-product.html"
+            ],
+
+            [
+                "📦",
+                "আমার মজুদ",
+                "আপনার পণ্যের স্টক দেখুন",
+                "products.html"
+            ],
+
+            [
+                "🛒",
+                "বিক্রির অর্ডার",
+                "অর্ডারের অবস্থা দেখুন",
+                "orders.html"
+            ],
+
+            [
+                "📊",
+                "বিক্রির রিপোর্ট",
+                "ব্যবসার রিপোর্ট দেখুন",
+                "reports.html"
+            ]
+
+        ]
+
+    },
+
+
+    aratdar: {
+
+        label: "আড়তদার",
+
+        icon: "🏪",
+
+        title: "আড়তদার ড্যাশবোর্ড",
+
+        note:
+            "পণ্য ও অর্ডার পরিচালনা করে বেচাকেনা সহজ করুন।",
+
+        actions: [
+
+            [
+                "➕",
+                "পণ্য যোগ করুন",
+                "নতুন সুপারি যোগ করুন",
+                "add-product.html"
+            ],
+
+            [
+                "🌰",
+                "বাজারের পণ্য",
+                "উপলব্ধ পণ্য দেখুন",
+                "products.html"
+            ],
+
+            [
+                "🛒",
+                "অর্ডার",
+                "অর্ডার পরিচালনা করুন",
+                "orders.html"
+            ],
+
+            [
+                "📊",
+                "ব্যবসার রিপোর্ট",
+                "হিসাব দেখুন",
+                "reports.html"
+            ]
+
+        ]
+
+    },
+
+
+    wholesaler: {
+
+        label: "পাইকার",
+
+        icon: "🚚",
+
+        title: "পাইকার ড্যাশবোর্ড",
+
+        note:
+            "বড় পরিমাণে সুপারি কিনুন এবং অর্ডার ট্র্যাক করুন।",
+
+        actions: [
+
+            [
+                "🌰",
+                "পণ্য খুঁজুন",
+                "উপলব্ধ সুপারি দেখুন",
+                "products.html"
+            ],
+
+            [
+                "🛒",
+                "অর্ডার করুন",
+                "নতুন অর্ডার দিন",
+                "products.html"
+            ],
+
+            [
+                "📦",
+                "আমার অর্ডার",
+                "অর্ডারের অবস্থা দেখুন",
+                "orders.html"
+            ]
+
+        ]
+
+    },
+
+
+    retailer: {
+
+        label: "খুচরা বিক্রেতা",
+
+        icon: "🛍️",
+
+        title: "খুচরা বিক্রেতা ড্যাশবোর্ড",
+
+        note:
+            "আপনার দোকানের জন্য সুপারি খুঁজুন ও অর্ডার করুন।",
+
+        actions: [
+
+            [
+                "🌰",
+                "পণ্য দেখুন",
+                "বাজারের সুপারি দেখুন",
+                "products.html"
+            ],
+
+            [
+                "🛒",
+                "কেনাকাটা",
+                "পণ্য অর্ডার করুন",
+                "products.html"
+            ],
+
+            [
+                "📦",
+                "আমার অর্ডার",
+                "অর্ডার ট্র্যাক করুন",
+                "orders.html"
+            ]
+
+        ]
+
+    },
+
+
+    consumer: {
+
+        label: "ভোক্তা",
+
+        icon: "👤",
+
+        title: "ভোক্তা ড্যাশবোর্ড",
+
+        note:
+            "প্রয়োজনের সুপারি সহজে খুঁজে অর্ডার করুন এবং অর্ডারের অবস্থা দেখুন।",
+
+        actions: [
+
+            [
+                "🌰",
+                "সুপারি দেখুন",
+                "উপলব্ধ পণ্য দেখুন",
+                "products.html"
+            ],
+
+            [
+                "🛒",
+                "অর্ডার করুন",
+                "পছন্দের পণ্য কিনুন",
+                "products.html"
+            ],
+
+            [
+                "📦",
+                "আমার অর্ডার",
+                "অর্ডার ট্র্যাক করুন",
+                "orders.html"
+            ]
+
+        ]
+
+    }
+
+};
+
+
+const info =
+    roleInfo[role] ||
+    roleInfo.consumer;
+
+
+// ========================================
+// BASIC UI
+// ========================================
+
+document.getElementById(
+    "dashboardTitle"
+).textContent = info.title;
+
+
+document.getElementById(
+    "welcomeMessage"
+).innerHTML =
+    `স্বাগতম, <strong>${escapeHtml(
+        user.name || "ব্যবহারকারী"
+    )}</strong>। আপনার প্রয়োজনীয় সবকিছু এক জায়গায়।`;
+
+
+document.getElementById(
+    "userName"
+).textContent =
+    user.name || "ব্যবহারকারী";
+
+
+document.getElementById(
+    "userRole"
+).textContent =
+    info.label;
+
+
+document.getElementById(
+    "avatar"
+).textContent =
+    info.icon;
+
+
+document.getElementById(
+    "roleNote"
+).textContent =
+    info.note;
+
+
+// ========================================
+// NAVIGATION
+// ========================================
+
+const nav = [
+
+    [
+        "index.html",
+        "হোম"
+    ],
+
+    [
+        "dashboard.html",
+        "ড্যাশবোর্ড"
+    ],
+
+    [
+        "products.html",
+        "পণ্যসমূহ"
+    ],
+
+    [
+        "orders.html",
+        "আমার অর্ডার"
+    ]
+
+];
+
+
+if (
+    ["admin", "farmer", "aratdar"]
+        .includes(role)
+) {
+
+    nav.push([
+        "reports.html",
+        "রিপোর্ট"
+    ]);
+
+}
+
+
+if (role === "admin") {
+
+    nav.push([
+        "admin.html",
+        "অ্যাডমিন"
+    ]);
+
+}
+
+
+nav.push([
+    "#",
+    "লগআউট"
+]);
+
+
+document.getElementById(
+    "navLinks"
+).innerHTML = nav.map(
+
+    ([href, text]) => {
+
+        if (href === "#") {
+
+            return `
+                <a
+                    href="#"
+                    onclick="logout(); return false;">
+                    ${text}
+                </a>
+            `;
+
+        }
+
+        return `
+            <a href="${href}">
+                ${text}
+            </a>
+        `;
+
+    }
+
+).join("");
+
+
+// ========================================
+// QUICK ACTIONS
+// ========================================
+
+document.getElementById(
+    "actionGrid"
+).innerHTML = info.actions.map(
+
+    action => `
+
+        <a
+            class="action-card"
+            href="${action[3]}">
+
+            <div class="action-icon">
+                ${action[0]}
+            </div>
+
+            <h3>
+                ${action[1]}
+            </h3>
+
+            <p>
+                ${action[2]}
+            </p>
+
+        </a>
+
+    `
+
+).join("");
+
+
+// ========================================
+// HTML SAFETY
+// ========================================
+
+function escapeHtml(value) {
+
+    return String(value ?? "")
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+// ========================================
+// BANGLA NUMBER FORMAT
+// ========================================
+
+function fmt(number) {
+
+    return Number(
+        number || 0
+    ).toLocaleString(
+        "bn-BD"
+    );
+
+}
+
+
+// ========================================
+// LOAD DASHBOARD STATISTICS
+// ========================================
+
+async function loadStats() {
+
+    const grid =
+        document.getElementById(
+            "statsGrid"
+        );
+
+
+    // Loading state
+
+    grid.innerHTML = `
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                ⏳
+            </div>
+
+            <h2>...</h2>
+
+            <p>
+                তথ্য লোড হচ্ছে
+            </p>
+
+        </div>
+
+    `.repeat(4);
+
+
+    try {
+
+        // IMPORTANT:
+        // Same API address as script.js
+
+        const [
+            productsResponse,
+            ordersResponse
+        ] = await Promise.all([
+
+            fetch(
+                API + "/products"
+            ),
+
+            fetch(
+                API + "/orders"
+            )
+
+        ]);
+
+
+        const products =
+            productsResponse.ok
+                ? await productsResponse.json()
+                : [];
+
+
+        const orders =
+            ordersResponse.ok
+                ? await ordersResponse.json()
+                : [];
+
+
+        // ========================================
+        // PRODUCT DATA
+        // ========================================
+
+        const available =
+            products.filter(
+                product =>
+                    Number(
+                        product.quantity
+                    ) > 0
+            );
+
+
+        const myProducts =
+            products.filter(
+                product =>
+                    String(
+                        product.seller
+                    ) === String(
+                        user.id
+                    )
+            );
+
+
+        // ========================================
+        // ORDER DATA
+        // ========================================
+
+        const myOrders =
+            orders.filter(
+                order =>
+                    String(
+                        order.buyer
+                    ) === String(
+                        user.id
+                    )
+            );
+
+
+        const mySales =
+            orders.filter(
+                order => {
+
+                    const product =
+                        products.find(
+                            item =>
+                                String(
+                                    item._id
+                                ) === String(
+                                    order.productId
+                                )
+                        );
+
+
+                    return (
+                        product &&
+                        String(
+                            product.seller
+                        ) === String(
+                            user.id
+                        )
+                    );
+
+                }
+            );
+
+
+        // ========================================
+        // CALCULATIONS
+        // ========================================
+
+        const stock =
+            myProducts.reduce(
+
+                (sum, product) =>
+                    sum +
+                    Number(
+                        product.quantity || 0
+                    ),
+
+                0
+
+            );
+
+
+        const spent =
+            myOrders
+
+                .filter(
+                    order =>
+                        order.status !==
+                        "Cancelled"
+                )
+
+                .reduce(
+
+                    (sum, order) =>
+                        sum +
+                        Number(
+                            order.totalPrice || 0
+                        ),
+
+                    0
+
+                );
+
+
+        const sales =
+            mySales
+
+                .filter(
+                    order =>
+                        order.status !==
+                        "Cancelled"
+                )
+
+                .reduce(
+
+                    (sum, order) =>
+                        sum +
+                        Number(
+                            order.totalPrice || 0
+                        ),
+
+                    0
+
+                );
+
+
+        // ========================================
+        // ROLE BASED STATISTICS
+        // ========================================
+
+        let cards;
+
+
+        // FARMER
+
+        if (role === "farmer") {
+
+            cards = [
+
+                [
+                    "🌰",
+                    fmt(
+                        myProducts.length
+                    ),
+                    "আমার পণ্য"
+                ],
+
+                [
+                    "📦",
+                    fmt(stock) + " KG",
+                    "বর্তমান মজুদ"
+                ],
+
+                [
+                    "🛒",
+                    fmt(
+                        mySales.length
+                    ),
+                    "বিক্রির অর্ডার"
+                ],
+
+                [
+                    "💰",
+                    "৳" + fmt(sales),
+                    "মোট বিক্রি"
+                ]
+
+            ];
+
+        }
+
+
+        // BUYERS
+
+        else if (
+
+            [
+                "wholesaler",
+                "retailer",
+                "consumer"
+            ].includes(role)
+
+        ) {
+
+            cards = [
+
+                [
+                    "🌰",
+                    fmt(
+                        available.length
+                    ),
+                    "পণ্য পাওয়া যাচ্ছে"
+                ],
+
+                [
+                    "🛒",
+                    fmt(
+                        myOrders.length
+                    ),
+                    "আমার অর্ডার"
+                ],
+
+                [
+                    "📦",
+                    fmt(
+                        myOrders.filter(
+                            order =>
+                                ![
+                                    "Delivered",
+                                    "Cancelled"
+                                ].includes(
+                                    order.status
+                                )
+                        ).length
+                    ),
+                    "চলমান অর্ডার"
+                ],
+
+                [
+                    "💰",
+                    "৳" + fmt(spent),
+                    "মোট খরচ"
+                ]
+
+            ];
+
+        }
+
+
+        // ADMIN / OTHER
+
+        else {
+
+            cards = [
+
+                [
+                    "🌰",
+                    fmt(
+                        available.length
+                    ),
+                    "উপলব্ধ পণ্য"
+                ],
+
+                [
+                    "📦",
+                    fmt(
+                        products.reduce(
+                            (sum, product) =>
+                                sum +
+                                Number(
+                                    product.quantity || 0
+                                ),
+                            0
+                        )
+                    ) + " KG",
+                    "মোট মজুদ"
+                ],
+
+                [
+                    "🛒",
+                    fmt(
+                        orders.length
+                    ),
+                    "মোট অর্ডার"
+                ],
+
+                [
+                    "💰",
+                    "৳" +
+                    fmt(
+                        orders
+
+                            .filter(
+                                order =>
+                                    order.status !==
+                                    "Cancelled"
+                            )
+
+                            .reduce(
+                                (sum, order) =>
+                                    sum +
+                                    Number(
+                                        order.totalPrice ||
+                                        0
+                                    ),
+
+                                0
+                            )
+                    ),
+                    "মোট লেনদেন"
+                ]
+
+            ];
+
+        }
+
+
+        // ========================================
+        // RENDER CARDS
+        // ========================================
+
+        grid.innerHTML =
+            cards.map(
+
+                card => `
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            ${card[0]}
+                        </div>
+
+                        <h2>
+                            ${card[1]}
+                        </h2>
+
+                        <p>
+                            ${card[2]}
+                        </p>
+
+                    </div>
+
+                `
+
+            ).join("");
+
+
+        // ========================================
+        // LOW STOCK ALERT
+        // ========================================
+
+        const lowStock =
+            myProducts.filter(
+
+                product =>
+
+                    Number(
+                        product.quantity
+                    ) > 0 &&
+
+                    Number(
+                        product.quantity
+                    ) <= 20
+
+            );
+
+
+        const alert =
+            document.getElementById(
+                "lowStockAlert"
+            );
+
+
+        if (
+            role === "farmer" &&
+            lowStock.length > 0
+        ) {
+
+            alert.classList.remove(
+                "hidden"
+            );
+
+
+            alert.innerHTML = `
+
+                🔔
+
+                <span>
+
+                    <strong>
+                        কম মজুদের সতর্কতা:
+                    </strong>
+
+                    আপনার
+                    ${fmt(
+                        lowStock.length
+                    )}
+                    টি পণ্যের মজুদ
+                    ২০ KG বা তার কম।
+
+                </span>
+
+            `;
+
+        }
+
+        else {
+
+            alert.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Dashboard Statistics Error:",
+            error
+        );
+
+
+        // Do NOT show Failed to fetch
+        // on dashboard.
+        // Keep dashboard usable.
+
+        grid.innerHTML = `
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🌰
+                </div>
+
+                <h2>STMS</h2>
+
+                <p>
+                    সিস্টেম চালু আছে
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    📦
+                </div>
+
+                <h2>—</h2>
+
+                <p>
+                    তথ্য পাওয়া যায়নি
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    🛒
+                </div>
+
+                <h2>—</h2>
+
+                <p>
+                    তথ্য পাওয়া যায়নি
+                </p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    💰
+                </div>
+
+                <h2>—</h2>
+
+                <p>
+                    তথ্য পাওয়া যায়নি
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// ========================================
+// LOGOUT
+// ========================================
+
+function logout() {
+
+    localStorage.removeItem(
+        "stmsUser"
+    );
+
+    localStorage.removeItem(
+        "stmsToken"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+// ========================================
+// START
+// ========================================
+
+loadStats();
+
+</script>
+
+</body>
+</html>

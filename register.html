@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>নিবন্ধন | STMS</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- ================================
+         Navigation Bar
+    ================================= -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            STMS
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                হোম
+            </a>
+
+            <a href="index.html#about">
+                পরিচিতি
+            </a>
+
+            <a href="index.html#features">
+                সুবিধা
+            </a>
+
+            <a href="login.html">
+                লগইন
+            </a>
+
+            <a href="register.html"
+               class="register-btn">
+                নিবন্ধন
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- ================================
+         নিবন্ধন Section
+    ================================= -->
+
+    <section class="register-section">
+
+
+        <div class="register-container">
+
+
+            <h1>
+                অ্যাকাউন্ট তৈরি করুন
+            </h1>
+
+
+            <p class="register-subtitle">
+                STMS-এ যোগ দিন
+            </p>
+
+
+
+            <!-- IMPORTANT:
+                 Form starts here
+            -->
+
+            <form id="registerForm">
+
+
+                <!-- পূর্ণ নাম -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        পূর্ণ নাম
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="আপনার পূর্ণ নাম লিখুন"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- Email -->
+
+                <div class="form-group">
+
+                    <label for="register-email">
+                        ইমেইল ঠিকানা
+                    </label>
+
+                    <input
+                        type="email"
+                        id="register-email"
+                        placeholder="আপনার ইমেইল লিখুন"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- Phone -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        মোবাইল নম্বর
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        placeholder="আপনার মোবাইল নম্বর লিখুন"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- পাসওয়ার্ড -->
+
+                <div class="form-group">
+
+                    <label for="register-password">
+                        পাসওয়ার্ড
+                    </label>
+
+                    <input
+                        type="password"
+                        id="register-password"
+                        placeholder="একটি পাসওয়ার্ড তৈরি করুন"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- Role -->
+
+                <div class="form-group">
+
+                    <label for="role">
+                        আপনার ভূমিকা নির্বাচন করুন
+                    </label>
+
+
+                    <select id="role" required>
+
+                        <option value="">
+                            ভূমিকা নির্বাচন করুন
+                        </option>
+
+                        <option value="farmer">
+                            কৃষক
+                        </option>
+
+                        <option value="aratdar">
+                            আড়তদার
+                        </option>
+
+                        <option value="wholesaler">
+                            পাইকার
+                        </option>
+
+                        <option value="retailer">
+                            খুচরা বিক্রেতা
+                        </option>
+
+                        <option value="consumer">
+                            ভোক্তা
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- Submit Button -->
+
+                <button
+                    type="submit"
+                    class="register-submit-btn">
+
+                    অ্যাকাউন্ট তৈরি করুন
+
+                </button>
+
+
+            </form>
+
+
+            <!-- লগইন Link -->
+
+            <p class="login-text">
+
+                আগেই অ্যাকাউন্ট আছে?
+
+                <a href="login.html">
+                    লগইন
+                </a>
+
+            </p>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================================
+         Footer
+    ================================= -->
+
+    <footer>
+
+        <p>
+            © 2026 সুপারি ট্রেডিং ম্যানেজমেন্ট সিস্টেম
+        </p>
+
+    </footer>
+
+
+
+    <!-- JavaScript -->
+
+    <script src="js/script.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>আমার অর্ডার | STMS</title><link rel="stylesheet" href="css/style.css"></head>
+<body>
+<nav class="navbar"><div class="logo">STMS</div><div class="nav-links">
+<a href="index.html">হোম</a><a href="dashboard.html">ড্যাশবোর্ড</a><a href="products.html">পণ্যসমূহ</a><a href="orders.html">আমার অর্ডার</a><a href="#" onclick="logout();return false">লগআউট</a>
+</div></nav>
+<main class="orders-page">
+<div class="orders-head"><div><h1>📦 অর্ডার ব্যবস্থাপনা</h1><p id="pageSubtitle">আপনার অর্ডারের অবস্থা এখানে দেখুন</p></div><a href="products.html" class="header-btn">＋ নতুন অর্ডার</a></div>
+<div class="orders-summary" id="summary"></div>
+<div class="orders-toolbar"><select id="statusFilter" class="filter-select"><option value="all">সব অর্ডার</option><option value="Pending">অপেক্ষমাণ</option><option value="Confirmed">গৃহীত</option><option value="Processing">প্রস্তুত হচ্ছে</option><option value="Delivered">সম্পন্ন</option><option value="Cancelled">বাতিল</option></select></div>
+<div id="orderList"><div class="message-box"><div class="message-icon">⏳</div><h3>অর্ডার লোড হচ্ছে...</h3><p>একটু অপেক্ষা করুন।</p></div></div>
+</main>
+<script>
+const user=JSON.parse(localStorage.getItem("stmsUser"));if(!user){location.href="login.html";}
+const role=String(user.role||"consumer").toLowerCase();const isSeller=["farmer","কৃষক","aratdar","admin"].includes(role);
+if(isSeller)document.getElementById("pageSubtitle").textContent=role==="farmer"||role==="কৃষক"?"আপনার পণ্যের ক্রেতাদের অর্ডার পরিচালনা করুন":"সব অর্ডার ও স্ট্যাটাস দেখুন";
+let allOrders=[],products=[];
+const bnStatus={Pending:"অপেক্ষমাণ",Confirmed:"গৃহীত",Processing:"প্রস্তুত হচ্ছে",Delivered:"সম্পন্ন",Cancelled:"বাতিল"};
+function fmt(n){return Number(n||0).toLocaleString("bn-BD");}
+function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
+function statusClass(s){return "status-"+String(s||"pending").toLowerCase();}
+function progress(status){
+ if(status==="Cancelled")return `<div style="margin-top:14px"><span class="status-badge status-cancelled">অর্ডার বাতিল হয়েছে</span></div>`;
+ const map={Pending:0,Confirmed:1,Processing:2,Delivered:3},n=map[status]??0;
+ return `<div class="progress">${[0,1,2,3].map(i=>`<div class="progress-step ${i<=n?"done":""}"></div>`).join("")}</div>
+ <div class="progress-labels"><span>অর্ডার</span><span>গৃহীত</span><span>প্রস্তুত</span><span>সম্পন্ন</span></div>`;
+}
+async function loadOrders(){
+ try{
+  const [or,pr]=await Promise.all([fetch("http://localhost:5000/api/orders"),fetch("http://localhost:5000/api/products")]);
+  if(!or.ok)throw new Error("অর্ডার লোড করা যায়নি");
+  allOrders=await or.json();products=pr.ok?await pr.json():[];
+  render();
+ }catch(e){document.getElementById("orderList").innerHTML=`<div class="message-box"><div class="message-icon">⚠️</div><h3 class="error-message">অর্ডার লোড করা যাচ্ছে না</h3><p>${esc(e.message)}</p><button class="submit-btn" style="max-width:220px;margin-top:15px" onclick="loadOrders()">আবার চেষ্টা করুন</button></div>`;}
+}
+function visibleOrders(){
+ if(role==="admin")return allOrders;
+ if(role==="farmer"||role==="কৃষক"||role==="aratdar")return allOrders.filter(o=>{const p=products.find(x=>String(x._id)===String(o.productId));return p&&String(p.seller)===String(user.id);});
+ return allOrders.filter(o=>String(o.buyer)===String(user.id));
+}
+function render(){
+ const list=visibleOrders(),filter=document.getElementById("statusFilter").value;
+ const filtered=filter==="all"?list:list.filter(o=>o.status===filter);
+ const active=list.filter(o=>!["Delivered","Cancelled"].includes(o.status)).length,total=list.filter(o=>o.status!=="Cancelled").reduce((s,o)=>s+Number(o.totalPrice||0),0);
+ document.getElementById("summary").innerHTML=`<div class="mini-stat"><strong>${fmt(list.length)}</strong><span>মোট অর্ডার</span></div><div class="mini-stat"><strong>${fmt(active)}</strong><span>চলমান অর্ডার</span></div><div class="mini-stat"><strong>৳${fmt(total)}</strong><span>মোট মূল্য</span></div>`;
+ if(!filtered.length){document.getElementById("orderList").innerHTML=`<div class="no-orders"><div class="message-icon">📦</div><h3>কোনো অর্ডার পাওয়া যায়নি</h3><p>এখনো এই তালিকায় কোনো অর্ডার নেই।</p><a href="products.html" class="header-btn" style="margin-top:16px">🌰 পণ্য দেখুন</a></div>`;return;}
+ document.getElementById("orderList").innerHTML=filtered.map((o,i)=>{
+  const date=o.createdAt?new Date(o.createdAt).toLocaleString("bn-BD"):"—";
+  const next=o.status==="Pending"?"Confirmed":o.status==="Confirmed"?"Processing":o.status==="Processing"?"Delivered":null;
+  const canManage=isSeller&&role!=="consumer"&&next;
+  return `<article class="order-card"><div class="order-card-top"><div><h3>🛒 অর্ডার #${esc(String(o._id||"").slice(-6).toUpperCase()||i+1)}</h3><div class="order-date">${esc(date)}</div></div><span class="status-badge ${statusClass(o.status)}">${bnStatus[o.status]||esc(o.status)}</span></div>
+  <p class="order-info"><span class="order-label">🌰 পণ্য:</span> ${esc(o.productType||"সুপারি")}</p>
+  <p class="order-info"><span class="order-label">${isSeller?"👤 ক্রেতা":"👤 ক্রেতা"}:</span> ${esc(o.buyerName||"—")}</p>
+  <p class="order-info"><span class="order-label">📦 পরিমাণ:</span> ${fmt(o.quantity)} KG &nbsp; <span class="order-label">💰 মোট:</span> ৳${fmt(o.totalPrice)}</p>
+  <p class="order-info"><span class="order-label">📍 ডেলিভারি:</span> ${esc(o.deliveryLocation||"—")}</p>
+  <p class="order-info"><span class="order-label">💳 পেমেন্ট:</span> ${esc(o.paymentMethod||"Cash on Delivery")} <span class="payment-badge">${o.paymentStatus==="Paid"?"পরিশোধিত":"বকেয়া"}</span></p>
+  ${progress(o.status)}
+  ${canManage?`<button class="product-action" style="max-width:250px" onclick="updateStatus('${esc(o._id)}','${next}')">➡️ ${bnStatus[next]} করুন</button>`:""}
+  </article>`;
+ }).join("");
+}
+async function updateStatus(id,status){
+ try{const r=await fetch("http://localhost:5000/api/orders/"+encodeURIComponent(id)+"/status",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({status})});const d=await r.json();if(!r.ok)throw new Error(d.message||"স্ট্যাটাস পরিবর্তন করা যায়নি");await loadOrders();}catch(e){alert("❌ "+e.message);}
+}
+document.getElementById("statusFilter").addEventListener("change",render);
+function logout(){localStorage.removeItem("stmsUser");localStorage.removeItem("stmsToken");location.href="login.html";}
+loadOrders();
+</script>
+</body></html>
