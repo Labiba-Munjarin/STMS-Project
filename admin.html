@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - STMS</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        STMS ADMIN
+    </div>
+
+    <div class="nav-links">
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="products.html">
+            Products
+        </a>
+
+        <a href="orders.html">
+            Orders
+        </a>
+
+        <a href="#" onclick="logout()">
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+<section class="register-section">
+
+    <div class="register-container">
+
+        <h1>
+            Admin Dashboard
+        </h1>
+
+        <p class="register-subtitle">
+            Supari Trading Management System
+        </p>
+
+
+        <!-- ========================================
+             DASHBOARD STATISTICS
+        ========================================= -->
+
+        <div style="
+            display:grid;
+            grid-template-columns:
+            repeat(auto-fit,minmax(170px,1fr));
+            gap:15px;
+            margin:25px 0;
+        ">
+
+
+            <!-- Products -->
+
+            <div style="
+                border:1px solid #ddd;
+                padding:20px;
+                border-radius:10px;
+                text-align:center;
+            ">
+
+                <h2 id="totalProducts">
+                    0
+                </h2>
+
+                <p>
+                    Total Products
+                </p>
+
+            </div>
+
+
+            <!-- Orders -->
+
+            <div style="
+                border:1px solid #ddd;
+                padding:20px;
+                border-radius:10px;
+                text-align:center;
+            ">
+
+                <h2 id="totalOrders">
+                    0
+                </h2>
+
+                <p>
+                    Total Orders
+                </p>
+
+            </div>
+
+
+            <!-- Revenue -->
+
+            <div style="
+                border:1px solid #ddd;
+                padding:20px;
+                border-radius:10px;
+                text-align:center;
+            ">
+
+                <h2 id="totalRevenue">
+                    ৳0
+                </h2>
+
+                <p>
+                    Total Revenue
+                </p>
+
+            </div>
+
+
+            <!-- Pending -->
+
+            <div style="
+                border:1px solid #ddd;
+                padding:20px;
+                border-radius:10px;
+                text-align:center;
+            ">
+
+                <h2 id="pendingOrders">
+                    0
+                </h2>
+
+                <p>
+                    Pending Orders
+                </p>
+
+            </div>
+
+
+            <!-- Paid -->
+
+            <div style="
+                border:1px solid #ddd;
+                padding:20px;
+                border-radius:10px;
+                text-align:center;
+            ">
+
+                <h2 id="paidOrders">
+                    0
+                </h2>
+
+                <p>
+                    Paid Orders
+                </p>
+
+            </div>
+
+
+            <!-- Unpaid -->
+
+            <div style="
+                border:1px solid #ddd;
+                padding:20px;
+                border-radius:10px;
+                text-align:center;
+            ">
+
+                <h2 id="unpaidOrders">
+                    0
+                </h2>
+
+                <p>
+                    Unpaid Orders
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================
+             ORDER MANAGEMENT
+        ========================================= -->
+
+        <h2>
+            Order Management
+        </h2>
+
+
+        <div id="adminOrders">
+
+            Loading orders...
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<script>
+
+
+// ========================================
+// CHECK LOGIN
+// ========================================
+
+const user =
+    JSON.parse(
+        localStorage.getItem("stmsUser")
+    );
+
+
+if (!user) {
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+// ========================================
+// LOAD ADMIN DATA
+// ========================================
+
+async function loadAdminData() {
+
+    try {
+
+
+        // ========================================
+        // LOAD PRODUCTS
+        // ========================================
+
+        const productResponse =
+            await fetch(
+                "http://localhost:5000/api/products"
+            );
+
+
+        const products =
+            await productResponse.json();
+
+
+        // ========================================
+        // LOAD ORDERS
+        // ========================================
+
+        const orderResponse =
+            await fetch(
+                "http://localhost:5000/api/orders"
+            );
+
+
+        const orders =
+            await orderResponse.json();
+
+
+        // ========================================
+        // BASIC STATISTICS
+        // ========================================
+
+        document.getElementById(
+            "totalProducts"
+        ).innerText =
+            products.length;
+
+
+        document.getElementById(
+            "totalOrders"
+        ).innerText =
+            orders.length;
+
+
+        // ========================================
+        // TOTAL REVENUE
+        // ========================================
+
+        const totalRevenue =
+            orders.reduce(
+                (total, order) => {
+
+                    return total +
+                        Number(
+                            order.totalPrice || 0
+                        );
+
+                },
+                0
+            );
+
+
+        document.getElementById(
+            "totalRevenue"
+        ).innerText =
+            `৳${totalRevenue}`;
+
+
+        // ========================================
+        // PENDING ORDERS
+        // ========================================
+
+        const pending =
+            orders.filter(
+                order =>
+                    order.status === "Pending"
+            ).length;
+
+
+        document.getElementById(
+            "pendingOrders"
+        ).innerText =
+            pending;
+
+
+        // ========================================
+        // PAID ORDERS
+        // ========================================
+
+        const paid =
+            orders.filter(
+                order =>
+                    order.paymentStatus === "Paid"
+            ).length;
+
+
+        document.getElementById(
+            "paidOrders"
+        ).innerText =
+            paid;
+
+
+        // ========================================
+        // UNPAID ORDERS
+        // ========================================
+
+        const unpaid =
+            orders.filter(
+                order =>
+                    order.paymentStatus !== "Paid"
+            ).length;
+
+
+        document.getElementById(
+            "unpaidOrders"
+        ).innerText =
+            unpaid;
+
+
+        // ========================================
+        // ORDER LIST
+        // ========================================
+
+        const adminOrders =
+            document.getElementById(
+                "adminOrders"
+            );
+
+
+        if (
+            !Array.isArray(orders) ||
+            orders.length === 0
+        ) {
+
+            adminOrders.innerHTML = `
+
+                <div style="
+                    border:1px solid #ddd;
+                    padding:30px;
+                    border-radius:10px;
+                    text-align:center;
+                ">
+
+                    <h3>
+                        📦 No Orders Found
+                    </h3>
+
+                    <p>
+                        No orders have been placed yet.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        // ========================================
+        // DISPLAY ORDERS
+        // ========================================
+
+        adminOrders.innerHTML =
+            orders.map(
+                (order, index) => `
+
+                <div style="
+                    border:1px solid #ddd;
+                    padding:20px;
+                    margin:15px 0;
+                    border-radius:10px;
+                ">
+
+
+                    <h3>
+                        🌰 Order #${index + 1}
+                    </h3>
+
+
+                    <hr>
+
+
+                    <p>
+
+                        <strong>
+                            Product:
+                        </strong>
+
+                        ${
+                            order.productType ||
+                            "Supari"
+                        }
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Buyer:
+                        </strong>
+
+                        ${
+                            order.buyerName ||
+                            "N/A"
+                        }
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Quantity:
+                        </strong>
+
+                        ${
+                            order.quantity ||
+                            0
+                        } KG
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Total Price:
+                        </strong>
+
+                        ৳${
+                            order.totalPrice ||
+                            0
+                        }
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Delivery:
+                        </strong>
+
+                        ${
+                            order.deliveryLocation ||
+                            "N/A"
+                        }
+
+                    </p>
+
+
+                    <!-- ORDER STATUS -->
+
+                    <div style="
+                        margin-top:15px;
+                    ">
+
+                        <label>
+
+                            <strong>
+                                Order Status:
+                            </strong>
+
+                        </label>
+
+
+                        <select
+                            onchange="
+                                updateStatus(
+                                    '${order._id}',
+                                    this.value
+                                )
+                            "
+                            style="
+                                padding:8px;
+                                margin-left:10px;
+                            "
+                        >
+
+                            <option
+                                value="Pending"
+                                ${
+                                    order.status === "Pending"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Pending
+                            </option>
+
+
+                            <option
+                                value="Confirmed"
+                                ${
+                                    order.status === "Confirmed"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Confirmed
+                            </option>
+
+
+                            <option
+                                value="Processing"
+                                ${
+                                    order.status === "Processing"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Processing
+                            </option>
+
+
+                            <option
+                                value="Delivered"
+                                ${
+                                    order.status === "Delivered"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Delivered
+                            </option>
+
+
+                            <option
+                                value="Cancelled"
+                                ${
+                                    order.status === "Cancelled"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Cancelled
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- PAYMENT METHOD -->
+
+                    <p style="
+                        margin-top:15px;
+                    ">
+
+                        <strong>
+                            Payment Method:
+                        </strong>
+
+                        ${
+                            order.paymentMethod ||
+                            "Cash on Delivery"
+                        }
+
+                    </p>
+
+
+                    <!-- PAYMENT STATUS -->
+
+                    <div style="
+                        margin-top:10px;
+                    ">
+
+                        <label>
+
+                            <strong>
+                                Payment Status:
+                            </strong>
+
+                        </label>
+
+
+                        <select
+                            onchange="
+                                updatePayment(
+                                    '${order._id}',
+                                    this.value
+                                )
+                            "
+                            style="
+                                padding:8px;
+                                margin-left:10px;
+                            "
+                        >
+
+                            <option
+                                value="Unpaid"
+                                ${
+                                    order.paymentStatus !== "Paid"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Unpaid
+                            </option>
+
+
+                            <option
+                                value="Paid"
+                                ${
+                                    order.paymentStatus === "Paid"
+                                    ? "selected"
+                                    : ""
+                                }
+                            >
+                                Paid
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                </div>
+
+            `
+            ).join("");
+
+
+    } catch (error) {
+
+        console.error(
+            "Admin Error:",
+            error
+        );
+
+
+        document.getElementById(
+            "adminOrders"
+        ).innerHTML = `
+
+            <div style="
+                border:1px solid #ddd;
+                padding:30px;
+                border-radius:10px;
+                text-align:center;
+            ">
+
+                <h3>
+                    ⚠️ Unable to Load Data
+                </h3>
+
+                <p>
+                    Make sure the backend server is running.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// ========================================
+// UPDATE ORDER STATUS
+// ========================================
+
+async function updateStatus(
+    orderId,
+    newStatus
+) {
+
+    try {
+
+        const response =
+            await fetch(
+                `http://localhost:5000/api/orders/${orderId}/status`,
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            status:
+                                newStatus
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (response.ok) {
+
+            alert(
+                "Order status updated successfully!"
+            );
+
+
+            loadAdminData();
+
+        } else {
+
+            alert(
+                data.message ||
+                "Failed to update status."
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to connect to server."
+        );
+
+    }
+
+}
+
+
+// ========================================
+// UPDATE PAYMENT STATUS
+// ========================================
+
+async function updatePayment(
+    orderId,
+    newPaymentStatus
+) {
+
+    try {
+
+        const response =
+            await fetch(
+                `http://localhost:5000/api/orders/${orderId}/payment`,
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            paymentStatus:
+                                newPaymentStatus
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (response.ok) {
+
+            alert(
+                "Payment status updated successfully!"
+            );
+
+
+            loadAdminData();
+
+        } else {
+
+            alert(
+                data.message ||
+                "Failed to update payment status."
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to connect to server."
+        );
+
+    }
+
+}
+
+
+// ========================================
+// LOGOUT
+// ========================================
+
+function logout() {
+
+    localStorage.removeItem(
+        "stmsUser"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+// ========================================
+// START
+// ========================================
+
+loadAdminData();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Reports - STMS</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        STMS
+    </div>
+
+    <div class="nav-links">
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="products.html">
+            Products
+        </a>
+
+        <a href="orders.html">
+            Orders
+        </a>
+
+        <a href="admin.html">
+            Admin
+        </a>
+
+        <a href="#" onclick="logout()">
+            Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+<section class="register-section">
+
+    <div class="register-container">
+
+        <h1>
+            Sales & Reports
+        </h1>
+
+        <p class="register-subtitle">
+            STMS Business Performance Overview
+        </p>
+
+
+        <!-- STATISTICS -->
+
+        <div style="
+            display:grid;
+            grid-template-columns:
+            repeat(auto-fit,minmax(180px,1fr));
+            gap:15px;
+            margin:25px 0;
+        ">
+
+
+            <div style="
+                border:1px solid #ddd;
+                padding:20px;
+                border-radius:10px;
+                text-align:center;
+            ">
+
+                <h2 id="totalSales">
+                    ৳0
+                </h2>
+
+                <p>
+                    Total Sales
+                </p>
+
+            </div>
+
+
+            <div style="
+                border:1px solid #ddd;
+                padding:20px;
+                border-radius:10px;
+                text-align:center;
+            ">
+
+                <h2 id="totalOrders">
+                    0
+                </h2>
+
+                <p>
+                    Total Orders
+                </p>
+
+            </div>
+
+
+            <div style="
+                border:1px solid #ddd;
+                padding:20px;
+                border-radius:10px;
+                text-align:center;
+            ">
+
+                <h2 id="deliveredOrders">
+                    0
+                </h2>
+
+                <p>
+                    Delivered Orders
+                </p>
+
+            </div>
+
+
+            <div style="
+                border:1px solid #ddd;
+                padding:20px;
+                border-radius:10px;
+                text-align:center;
+            ">
+
+                <h2 id="pendingOrders">
+                    0
+                </h2>
+
+                <p>
+                    Pending Orders
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <h2>
+            Order Summary
+        </h2>
+
+
+        <div id="reportList">
+
+            Loading report...
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+<script>
+
+
+// ========================================
+// LOGIN CHECK
+// ========================================
+
+const user =
+    JSON.parse(
+        localStorage.getItem("stmsUser")
+    );
+
+
+if (!user) {
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+// ========================================
+// LOAD REPORT
+// ========================================
+
+async function loadReport() {
+
+    try {
+
+        const response =
+            await fetch(
+                "http://localhost:5000/api/orders"
+            );
+
+
+        const orders =
+            await response.json();
+
+
+        if (!Array.isArray(orders)) {
+
+            throw new Error(
+                "Invalid order data"
+            );
+
+        }
+
+
+        // ========================================
+        // TOTAL SALES
+        // ========================================
+
+        const totalSales =
+            orders.reduce(
+                (sum, order) =>
+                    sum +
+                    Number(
+                        order.totalPrice || 0
+                    ),
+                0
+            );
+
+
+        document.getElementById(
+            "totalSales"
+        ).innerText =
+            `৳${totalSales}`;
+
+
+        // ========================================
+        // TOTAL ORDERS
+        // ========================================
+
+        document.getElementById(
+            "totalOrders"
+        ).innerText =
+            orders.length;
+
+
+        // ========================================
+        // DELIVERED
+        // ========================================
+
+        const delivered =
+            orders.filter(
+                order =>
+                    order.status ===
+                    "Delivered"
+            ).length;
+
+
+        document.getElementById(
+            "deliveredOrders"
+        ).innerText =
+            delivered;
+
+
+        // ========================================
+        // PENDING
+        // ========================================
+
+        const pending =
+            orders.filter(
+                order =>
+                    order.status ===
+                    "Pending"
+            ).length;
+
+
+        document.getElementById(
+            "pendingOrders"
+        ).innerText =
+            pending;
+
+
+        // ========================================
+        // ORDER LIST
+        // ========================================
+
+        const reportList =
+            document.getElementById(
+                "reportList"
+            );
+
+
+        if (orders.length === 0) {
+
+            reportList.innerHTML = `
+
+                <div style="
+                    border:1px solid #ddd;
+                    padding:30px;
+                    border-radius:10px;
+                    text-align:center;
+                ">
+
+                    <h3>
+                        No Sales Data
+                    </h3>
+
+                    <p>
+                        No orders have been placed yet.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        reportList.innerHTML =
+            orders.map(
+                (order, index) => `
+
+                <div style="
+                    border:1px solid #ddd;
+                    padding:20px;
+                    margin:15px 0;
+                    border-radius:10px;
+                ">
+
+                    <h3>
+                        Order #${index + 1}
+                    </h3>
+
+                    <p>
+                        <strong>
+                            Product:
+                        </strong>
+
+                        ${
+                            order.productType ||
+                            "Supari"
+                        }
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Buyer:
+                        </strong>
+
+                        ${
+                            order.buyerName ||
+                            "N/A"
+                        }
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Quantity:
+                        </strong>
+
+                        ${
+                            order.quantity ||
+                            0
+                        } KG
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Revenue:
+                        </strong>
+
+                        ৳${
+                            order.totalPrice ||
+                            0
+                        }
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Order Status:
+                        </strong>
+
+                        ${
+                            order.status ||
+                            "Pending"
+                        }
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Payment:
+                        </strong>
+
+                        ${
+                            order.paymentStatus ||
+                            "Unpaid"
+                        }
+                    </p>
+
+                </div>
+
+            `
+            ).join("");
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "reportList"
+        ).innerHTML = `
+
+            <p>
+                Unable to load report.
+                Please make sure backend is running.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+// ========================================
+// LOGOUT
+// ========================================
+
+function logout() {
+
+    localStorage.removeItem(
+        "stmsUser"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+// ========================================
+// START
+// ========================================
+
+loadReport();
+
+</script>
+
+
+</body>
+
+</html>
